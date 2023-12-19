@@ -109,7 +109,7 @@ impl EVM {
         to: &str,
         value: Option<U256>,
         data: Option<Vec<u8>>,
-    ) -> PyResult<Vec<u8>> {
+    ) ->  PyResult<String> {
         let res = _self
             .0
             .call_raw_committing(
@@ -128,8 +128,7 @@ impl EVM {
         }
 
         // TODO: Return the traces back to the user.
-        dbg!(&res.traces);
-        Ok(res.result.to_vec())
+        Ok(format!("{:x}", res.result))
     }
 
     fn call_raw(
@@ -138,7 +137,7 @@ impl EVM {
         to: &str,
         value: Option<U256>,
         data: Option<Vec<u8>>,
-    ) -> PyResult<Vec<u8>> {
+    ) -> PyResult<String> {
         let res = _self
             .0
             .call_raw(
@@ -153,8 +152,7 @@ impl EVM {
             return Err(pyerr(res.exit_reason));
         }
 
-        dbg!(&res.traces);
-        Ok(res.result.to_vec())
+        Ok(format!("{:x}", res.result))
     }
 
     /// Deploy a contract with the given code.
