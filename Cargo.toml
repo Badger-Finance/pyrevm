@@ -18,6 +18,7 @@ hex = "0.4"
 eyre = "0.6"
 ruint = { version = "1.10", features = ["primitive-types", "pyo3"] }
 reqwest = { version = "0.11.20", features = ["rustls"] }
+openssl = { version = "0.10.57", features = ["vendored"] }
 
 [patch.crates-io]
 revm = { git = "https://github.com/bluealloy/revm", rev = "6b55b9c0ab264c000e087c2f54f2d8dc24b869aa" }
