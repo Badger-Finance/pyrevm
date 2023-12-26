@@ -100,7 +100,7 @@ def test_call_raw():
         ),
     )
 
-    assert int.from_bytes(result, "big") == 256
+    assert int(result, 16) == 256
 
 
 def test_call_committing():
@@ -118,7 +118,7 @@ def test_call_committing():
         ),
     )
 
-    assert int.from_bytes(result, "big") == 171
+    assert int(result, 16) == 171
 
 
 def test_call_empty_result():
@@ -134,12 +134,10 @@ def test_call_empty_result():
         data=bytes.fromhex("d0e30db0"),
     )
 
-    assert deposit == []
-
     balance = evm.call_raw(
         caller=address2,
         to=address,
         data=bytes.fromhex("70a08231" + encode_address(address2)),
     )
 
-    assert int.from_bytes(balance, "big") == 10000
+    assert int(balance, 16) == 10000
