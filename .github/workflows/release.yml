@@ -8,6 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - name: Install OpenSSL
+      run: sudo apt-get update && sudo apt-get install libssl-dev
+
     - name: Cleanup dist directory
       run: rm -rf dist/
     - uses: messense/maturin-action@v1
@@ -25,6 +28,9 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v3
+    - name: Install OpenSSL
+      run: choco install openssl
+
     - uses: messense/maturin-action@v1
       with:
         command: build
@@ -39,6 +45,9 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v3
+    - name: Install OpenSSL
+      run: brew install openssl
+
     - uses: messense/maturin-action@v1
       with:
         command: build
