@@ -9,7 +9,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Install OpenSSL
-      run: sudo apt-get update && sudo apt-get install libssl-dev
+      run: sudo apt-get update && sudo apt-get install -y libssl-dev pkg-config
 
     - name: Cleanup dist directory
       run: rm -rf dist/
