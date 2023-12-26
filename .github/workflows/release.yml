@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - name: Cleanup dist directory
+      run: rm -rf dist/
     - uses: messense/maturin-action@v1
       with:
         manylinux: auto
