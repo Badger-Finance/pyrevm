@@ -8,20 +8,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+  
     - name: Install OpenSSL
       run: sudo apt-get update && sudo apt-get install -y libssl-dev pkg-config
+
     - name: Verify OpenSSL Installation
       run: |
         dpkg -L libssl-dev
         pkg-config --modversion openssl
         pkg-config --libs --cflags openssl
+        openssl version
+
     - name: Configure OpenSSL Environment Variables
       run: |
-        echo "OPENSSL_DIR=/usr" >> $GITHUB_ENV
-        echo "OPENSSL_LIB_DIR=/usr/lib/x86_64-linux-gnu" >> $GITHUB_ENV
-        echo "OPENSSL_INCLUDE_DIR=/usr/include/openssl" >> $GITHUB_ENV
+        echo "OPENSSL_DIR=$(pkg-config --variable=prefix openssl)" >> $GITHUB_ENV
+        echo "OPENSSL_LIB_DIR=$(pkg-config --variable=libdir openssl)" >> $GITHUB_ENV
+        echo "OPENSSL_INCLUDE_DIR=$(pkg-config --variable=includedir openssl)" >> $GITHUB_ENV
+
     - name: Cleanup dist directory
       run: rm -rf dist/
+
     - uses: messense/maturin-action@v1
       with:
         manylinux: auto
