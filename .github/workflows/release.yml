@@ -15,8 +15,17 @@ jobs:
         run: |
           echo "OPENSSL_DIR=/usr" >> $GITHUB_ENV
           echo "OPENSSL_LIB_DIR=/usr/lib/x86_64-linux-gnu" >> $GITHUB_ENV
-          echo "OPENSSL_INCLUDE_DIR=/usr/include/openssl" >> $GITHUB_ENV
+          echo "OPENSSL_INCLUDE_DIR=/usr/include" >> $GITHUB_ENV
           echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig" >> $GITHUB_ENV
+
+      - name: Verify OpenSSL Installation and Env Vars
+        run: |
+          echo "OPENSSL_DIR=$OPENSSL_DIR"
+          echo "OPENSSL_LIB_DIR=$OPENSSL_LIB_DIR"
+          echo "OPENSSL_INCLUDE_DIR=$OPENSSL_INCLUDE_DIR"
+          echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
+          openssl version
+          pkg-config --libs --cflags openssl
 
       - name: Cleanup dist directory
         run: rm -rf dist/
