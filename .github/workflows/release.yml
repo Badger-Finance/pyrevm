@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: wheels-linux
-          path: target/release/
+          path: target/release/*.whl
 
   windows:
     runs-on: windows-latest
