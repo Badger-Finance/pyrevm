@@ -40,9 +40,6 @@ jobs:
         env:
           CARGO_TERM_COLOR: always
 
-      - name: List built wheels
-        run: ls dist/
-
       - name: Upload wheels
         uses: actions/upload-artifact@v2
         with:
