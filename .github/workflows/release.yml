@@ -1,4 +1,3 @@
-# from https://github.com/lambdaclass/cairo-rs/blob/new-poc-implementation/rust_python_ffi/.github/workflows/CI.yml
 name: release
 
 on: workflow_dispatch
@@ -7,80 +6,100 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-  
-    - name: Install OpenSSL
-      run: sudo apt-get update && sudo apt-get install -y libssl-dev pkg-config
+      - uses: actions/checkout@v3
 
-    - name: Verify OpenSSL Installation
-      run: |
-        dpkg -L libssl-dev
-        pkg-config --modversion openssl
-        pkg-config --libs --cflags openssl
-        openssl version
+      - name: Install OpenSSL
+        run: sudo apt-get update && sudo apt-get install -y libssl-dev pkg-config
 
-    - name: Configure OpenSSL Environment Variables
-      run: |
-        echo "OPENSSL_DIR=$(pkg-config --variable=prefix openssl)" >> $GITHUB_ENV
-        echo "OPENSSL_LIB_DIR=$(pkg-config --variable=libdir openssl)" >> $GITHUB_ENV
-        echo "OPENSSL_INCLUDE_DIR=$(pkg-config --variable=includedir openssl)" >> $GITHUB_ENV
+      - name: Verify OpenSSL Installation
+        run: |
+          dpkg -L libssl-dev
+          pkg-config --modversion openssl
+          pkg-config --libs --cflags openssl
+          openssl version
 
-    - name: Cleanup dist directory
-      run: rm -rf dist/
+      - name: Configure OpenSSL Environment Variables
+        run: |
+          echo "OPENSSL_DIR=$(pkg-config --variable=prefix openssl)" >> $GITHUB_ENV
+          echo "OPENSSL_LIB_DIR=$(pkg-config --variable=libdir openssl)" >> $GITHUB_ENV
+          echo "OPENSSL_INCLUDE_DIR=$(pkg-config --variable=includedir openssl)" >> $GITHUB_ENV
 
-    - uses: messense/maturin-action@v1
-      with:
-        manylinux: auto
-        command: build
-        args: --release -o dist --find-interpreter
-    - name: Upload wheels
-      uses: actions/upload-artifact@v2
-      with:
-        name: wheels
-        path: dist
+      - name: Cleanup dist directory
+        run: rm -rf dist/
+
+      - name: Build and Prepare Wheels
+        uses: messense/maturin-action@v1
+        with:
+          manylinux: auto
+          command: build
+          args: --release -o dist --find-interpreter
+      - name: List built wheels
+        run: ls dist/
+      - name: Upload wheels
+        uses: actions/upload-artifact@v2
+        with:
+          name: wheels-linux
+          path: dist
 
   windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Install OpenSSL
-      run: choco install openssl
+      - uses: actions/checkout@v3
+      - name: Install OpenSSL
+        run: choco install openssl
 
-    - uses: messense/maturin-action@v1
-      with:
-        command: build
-        args: --release -o dist --find-interpreter
-    - name: Upload wheels
-      uses: actions/upload-artifact@v2
-      with:
-        name: wheels
-        path: dist
+      - name: Build and Prepare Wheels
+        uses: messense/maturin-action@v1
+        with:
+          command: build
+          args: --release -o dist --find-interpreter
+      - name: List built wheels
+        run: ls dist/
+      - name: Upload wheels
+        uses: actions/upload-artifact@v2
+        with:
+          name: wheels-windows
+          path: dist
 
   macos:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Install OpenSSL
-      run: brew install openssl
+      - uses: actions/checkout@v3
+      - name: Install OpenSSL
+        run: brew install openssl
 
-    - uses: messense/maturin-action@v1
-      with:
-        command: build
-        args: --release -o dist --universal2 --find-interpreter
-    - name: Upload wheels
-      uses: actions/upload-artifact@v2
-      with:
-        name: wheels
-        path: dist
+      - name: Build and Prepare Wheels
+        uses: messense/maturin-action@v1
+        with:
+          command: build
+          args: --release -o dist --universal2 --find-interpreter
+      - name: List built wheels
+        run: ls dist/
+      - name: Upload wheels
+        uses: actions/upload-artifact@v2
+        with:
+          name: wheels-macos
+          path: dist
 
   release:
     name: Release
     runs-on: ubuntu-latest
     needs: [ macos, windows, linux ]
     steps:
-      - uses: actions/download-artifact@v2
+      - name: Download all wheels (Linux)
+        uses: actions/download-artifact@v2
         with:
-          name: wheels
+          name: wheels-linux
+      - name: Download all wheels (Windows)
+        uses: actions/download-artifact@v2
+        with:
+          name: wheels-windows
+      - name: Download all wheels (macOS)
+        uses: actions/download-artifact@v2
+        with:
+          name: wheels-macos
+      - name: List all downloaded wheels
+        run: ls
       - name: Publish to PyPI
         uses: messense/maturin-action@v1
         env:
