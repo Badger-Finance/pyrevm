@@ -9,7 +9,9 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Install OpenSSL
-        run: sudo apt-get update && sudo apt-get install -y libssl-dev pkg-config
+        run: |
+          sudo apt-get update 
+          sudo apt-get install -y libssl-dev pkg-config
 
       - name: Verify OpenSSL Installation
         run: |
@@ -23,6 +25,7 @@ jobs:
           echo "OPENSSL_DIR=$(pkg-config --variable=prefix openssl)" >> $GITHUB_ENV
           echo "OPENSSL_LIB_DIR=$(pkg-config --variable=libdir openssl)" >> $GITHUB_ENV
           echo "OPENSSL_INCLUDE_DIR=$(pkg-config --variable=includedir openssl)" >> $GITHUB_ENV
+          echo "PKG_CONFIG_PATH=$OPENSSL_LIB_DIR/pkgconfig" >> $GITHUB_ENV
 
       - name: Cleanup dist directory
         run: rm -rf dist/
