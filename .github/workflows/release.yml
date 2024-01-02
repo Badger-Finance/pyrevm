@@ -36,7 +36,7 @@ jobs:
           export OPENSSL_LIB_DIR=$OPENSSL_LIB_DIR
           export OPENSSL_INCLUDE_DIR=$OPENSSL_INCLUDE_DIR
           export PKG_CONFIG_PATH=$PKG_CONFIG_PATH
-          cargo build --release
+          cargo build --release 
         env:
           CARGO_TERM_COLOR: always
 
@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: wheels-linux
-          path: dist
+          path: target/release/
 
   windows:
     runs-on: windows-latest
