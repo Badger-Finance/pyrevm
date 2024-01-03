@@ -47,11 +47,21 @@ jobs:
           toolchain: stable
           target: aarch64-unknown-linux-gnu
           override: true
+  
+      - name: Install cross-compiling tools and OpenSSL for ARM64
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+          sudo apt-get install -y libssl-dev
+        
 
       - name: Build arm64 Wheels
-        run: maturin build --release --out dist/arm64 --find-interpreter --target aarch64-unknown-linux-gnu
+        run: maturin build --release --out dist/arm64 --target aarch64-unknown-linux-gnu
         env:
           CARGO_TERM_COLOR: always
+          CC: aarch64-linux-gnu-gcc
+          OPENSSL_DIR: /path/to/openssl/for/aarch64
+        
   
       - name: Build amd64 Wheels
         run: maturin build --release --out dist/amd64 --find-interpreter --target x86_64-unknown-linux-gnu
