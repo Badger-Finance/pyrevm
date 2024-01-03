@@ -53,6 +53,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
           sudo apt-get install -y libssl-dev
+          sudo apt-get install musl-tools clang llvm -y
+
+      - name: Set Environment Variables for ARM64 build
+        run: |
+          echo "CC_aarch64_unknown_linux_musl=clang" >> $GITHUB_ENV
+          echo "AR_aarch64_unknown_linux_musl=llvm-ar" >> $GITHUB_ENV
+          echo "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_RUSTFLAGS=-Clink-self-contained=yes -Clinker=rust-lld" >> $GITHUB_ENV
         
 
       - name: Build arm64 Wheels
