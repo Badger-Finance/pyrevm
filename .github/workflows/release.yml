@@ -11,7 +11,7 @@ jobs:
       - name: Install OpenSSL
         run: sudo apt-get update && sudo apt-get install -y libssl-dev pkg-config
 
-      - name: Set OpenSSL Environment Variables
+      - name: Set OpenSSL Env Vars
         run: |
           echo "OPENSSL_DIR=/usr" >> $GITHUB_ENV
           echo "OPENSSL_LIB_DIR=/usr/lib/x86_64-linux-gnu" >> $GITHUB_ENV
@@ -33,15 +33,21 @@ jobs:
       - name: Install maturin
         run: pip install maturin
 
-      - name: Build and Prepare Wheels
+      - name: Set Env Vars
         run: |
           export OPENSSL_DIR=$OPENSSL_DIR
           export OPENSSL_LIB_DIR=$OPENSSL_LIB_DIR
           export OPENSSL_INCLUDE_DIR=$OPENSSL_INCLUDE_DIR
           export PKG_CONFIG_PATH=$PKG_CONFIG_PATH
-          maturin build --release --out dist
         env:
           CARGO_TERM_COLOR: always
+
+      - name: Build and Prepare Wheels using maturin-action
+        uses: messense/maturin-action@v1
+        with:
+          manylinux: auto
+          command: build
+          args: --release --out dist --find-interpreter
 
       - name: Upload wheels
         uses: actions/upload-artifact@v2
