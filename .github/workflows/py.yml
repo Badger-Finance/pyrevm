@@ -1,9 +1,5 @@
 name: py
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ '*' ]
+on: workflow_dispatch
 
 jobs:
   tests:
