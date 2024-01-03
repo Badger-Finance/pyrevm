@@ -92,7 +92,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    needs: [ linux ]
+    needs: [ linux, windows, macos ]
     steps:
       - name: Download all wheels (Linux)
         uses: actions/download-artifact@v2
