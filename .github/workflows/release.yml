@@ -98,16 +98,16 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: wheels-linux
-      - name: Download all wheels (Windows)
-        uses: actions/download-artifact@v2
-        with:
-          name: wheels-windows
-      - name: Download all wheels (macOS)
-        uses: actions/download-artifact@v2
-        with:
-          name: wheels-macos
-      - name: List all downloaded wheels
-        run: ls
+      # - name: Download all wheels (Windows)
+      #   uses: actions/download-artifact@v2
+      #   with:
+      #     name: wheels-windows
+      # - name: Download all wheels (macOS)
+      #   uses: actions/download-artifact@v2
+      #   with:
+      #     name: wheels-macos
+      # - name: List all downloaded wheels
+      #   run: ls
       - name: Publish to PyPI
         uses: messense/maturin-action@v1
         env:
