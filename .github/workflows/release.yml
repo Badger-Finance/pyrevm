@@ -36,7 +36,7 @@ jobs:
           export OPENSSL_LIB_DIR=$OPENSSL_LIB_DIR
           export OPENSSL_INCLUDE_DIR=$OPENSSL_INCLUDE_DIR
           export PKG_CONFIG_PATH=$PKG_CONFIG_PATH
-          cargo build --release 
+          maturin build --release --out dist
         env:
           CARGO_TERM_COLOR: always
 
@@ -44,47 +44,47 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: wheels-linux
-          path: target/release/*.whl
+          path: dist/*.whl
 
-  windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install OpenSSL
-        run: choco install openssl
+  # windows:
+  #   runs-on: windows-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Install OpenSSL
+  #       run: choco install openssl
 
-      - name: Build and Prepare Wheels
-        uses: messense/maturin-action@v1
-        with:
-          command: build
-          args: --release -o dist --find-interpreter
-      - name: List built wheels
-        run: ls dist/
-      - name: Upload wheels
-        uses: actions/upload-artifact@v2
-        with:
-          name: wheels-windows
-          path: dist
+  #     - name: Build and Prepare Wheels
+  #       uses: messense/maturin-action@v1
+  #       with:
+  #         command: build
+  #         args: --release -o dist --find-interpreter
+  #     - name: List built wheels
+  #       run: ls dist/
+  #     - name: Upload wheels
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: wheels-windows
+  #         path: dist
 
-  macos:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install OpenSSL
-        run: brew install openssl
+  # macos:
+  #   runs-on: macos-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Install OpenSSL
+  #       run: brew install openssl
 
-      - name: Build and Prepare Wheels
-        uses: messense/maturin-action@v1
-        with:
-          command: build
-          args: --release -o dist --universal2 --find-interpreter
-      - name: List built wheels
-        run: ls dist/
-      - name: Upload wheels
-        uses: actions/upload-artifact@v2
-        with:
-          name: wheels-macos
-          path: dist
+  #     - name: Build and Prepare Wheels
+  #       uses: messense/maturin-action@v1
+  #       with:
+  #         command: build
+  #         args: --release -o dist --universal2 --find-interpreter
+  #     - name: List built wheels
+  #       run: ls dist/
+  #     - name: Upload wheels
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: wheels-macos
+  #         path: dist
 
   release:
     name: Release
