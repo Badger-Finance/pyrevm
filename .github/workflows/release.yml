@@ -29,6 +29,9 @@ jobs:
 
       - name: Cleanup dist directory
         run: rm -rf dist/
+      
+      - name: Install maturin
+        run: pip install maturin
 
       - name: Build and Prepare Wheels
         run: |
