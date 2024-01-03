@@ -33,13 +33,20 @@ jobs:
       - name: Install maturin
         run: pip install maturin
 
-      - name: Build and Prepare Wheels
+      - name: Set OpenSSL Environment Variables
         run: |
-          export OPENSSL_DIR=$OPENSSL_DIR
-          export OPENSSL_LIB_DIR=$OPENSSL_LIB_DIR
-          export OPENSSL_INCLUDE_DIR=$OPENSSL_INCLUDE_DIR
-          export PKG_CONFIG_PATH=$PKG_CONFIG_PATH
-          maturin build --release --out dist --target aarch64-unknown-linux-gnu --target x86_64-unknown-linux-gnu
+          echo "OPENSSL_DIR=/usr" >> $GITHUB_ENV
+          echo "OPENSSL_LIB_DIR=/usr/lib/x86_64-linux-gnu" >> $GITHUB_ENV
+          echo "OPENSSL_INCLUDE_DIR=/usr/include" >> $GITHUB_ENV
+          echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig" >> $GITHUB_ENV
+  
+      - name: Build amd64 Wheels
+        run: maturin build --release --out dist/amd64 --target x86_64-unknown-linux-gnu
+        env:
+          CARGO_TERM_COLOR: always
+
+      - name: Build arm64 Wheels
+        run: maturin build --release --out dist/arm64 --target aarch64-unknown-linux-gnu
         env:
           CARGO_TERM_COLOR: always
 
