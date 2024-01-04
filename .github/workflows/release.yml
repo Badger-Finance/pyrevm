@@ -5,62 +5,21 @@ on: workflow_dispatch
 jobs:
   linux:
     runs-on: ubuntu-latest
-    container:
-      image: messense/rust-musl-cross:aarch64-musl
+    strategy:
+      matrix:
+        target: [x86_64-unknown-linux-gnu, aarch64-unknown-linux-gnu]
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y libssl-dev pkg-config gcc-aarch64-linux-gnu g++-aarch64-linux-gnu musl-tools
-
-      - name: Set OpenSSL and PKG_CONFIG Environment Variables
-        run: |
-          echo "OPENSSL_DIR=/usr" >> $GITHUB_ENV
-          echo "OPENSSL_LIB_DIR=/usr/lib/aarch64-linux-gnu" >> $GITHUB_ENV
-          echo "OPENSSL_INCLUDE_DIR=/usr/include" >> $GITHUB_ENV
-          echo "PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig" >> $GITHUB_ENV
-
-      - name: Verify Environment Setup
-        run: |
-          echo "OPENSSL_DIR=$OPENSSL_DIR"
-          echo "OPENSSL_LIB_DIR=$OPENSSL_LIB_DIR"
-          echo "OPENSSL_INCLUDE_DIR=$OPENSSL_INCLUDE_DIR"
-          echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
-          openssl version
-          pkg-config --libs --cflags openssl
-
-      - name: Cleanup dist directory
-        run: rm -rf dist/
-      
       - name: Install maturin
         run: pip install maturin
 
-      - name: Set up Rust for ARM64
-        uses: actions-rs/toolchain@v1
+      - name: Build wheels for ${{ matrix.target }}
+        uses: PyO3/maturin-action@v1
         with:
-          profile: minimal
-          toolchain: stable
-          target: aarch64-unknown-linux-gnu
-          override: true
-
-      - name: Set Environment Variables for ARM64 build
-        run: |
-          echo "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
-          echo "CC_aarch64_unknown_linux_gnu=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
-          echo "CXX_aarch64_unknown_linux_gnu=aarch64-linux-gnu-g++" >> $GITHUB_ENV
-
-      - name: Build arm64 Wheels
-        run: maturin build --release --out dist/arm64 --find-interpreter --target aarch64-unknown-linux-gnu
-        env:
-          CARGO_TERM_COLOR: always
-          OPENSSL_DIR: /usr
-          CC: aarch64-linux-gnu-gcc
-          CXX: aarch64-linux-gnu-g++
-
-      - name: Build amd64 Wheels
-        run: maturin build --release --out dist/amd64 --find-interpreter --target x86_64-unknown-linux-gnu
-        env:
-          CARGO_TERM_COLOR: always
+          target: ${{ matrix.target }}
+          args: --release --out dist --manylinux auto
+          sccache: 'true'
 
       - name: Upload wheels
         uses: actions/upload-artifact@v2
