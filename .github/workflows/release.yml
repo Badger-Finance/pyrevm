@@ -45,15 +45,10 @@ jobs:
   
       - name: Install cross-compiling tools for ARM64
         run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
-          sudo apt-get install musl-tools
-
-      - name: Install cross-compiling tools for ARM64
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
-          sudo apt-get install -y musl-tools
+          export DEBIAN_FRONTEND=noninteractive
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+          sudo apt-get install -y -qq musl-tools
 
       - name: Set Environment Variables for ARM64 build
         run: |
