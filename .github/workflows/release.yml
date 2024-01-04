@@ -21,7 +21,7 @@ jobs:
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.target }}
-          args: --release --out dist --manylinux 2010
+          args: --release --out dist --find-interpreter --manylinux 2010
           sccache: 'true'
 
       - name: Upload wheels
